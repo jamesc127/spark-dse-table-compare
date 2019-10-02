@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: typesafe.config
+Bnd-LastModified: 1555591816321
+Bundle-Description: configuration library for JVM languages using HOCON 
+ files
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0;description=
+ Apache-2.0
+Bundle-ManifestVersion: 2
+Bundle-Name: config
+Bundle-SymbolicName: com.typesafe.config
+Bundle-Vendor: com.typesafe
+Bundle-Version: 1.3.4
+Created-By: 1.8.0_202 (AdoptOpenJdk)
+Export-Package: com.typesafe.config;version="1.3.4",com.typesafe.config.
+ impl;uses:="com.typesafe.config";version="1.3.4"
+Implementation-Title: config
+Implementation-URL: https://github.com/lightbend/config
+Implementation-Vendor: com.typesafe
+Implementation-Vendor-Id: com.typesafe
+Implementation-Version: 1.3.4
+Import-Package: com.typesafe.config
+Private-Package: com.typesafe.config.parser
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Specification-Title: config
+Specification-Vendor: com.typesafe
+Specification-Version: 1.3.4
+Tool: Bnd-2.4.0.201411031534

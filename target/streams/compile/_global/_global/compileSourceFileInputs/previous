@@ -1,0 +1,1 @@
+["sbt.Task[scala.collection.immutable.Map[java.lang.String, scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]]",{"2.11.8":{"hashes":[["/Users/jamescolvin/Library/Programs/spark-table-compare/src/main/scala/TableCompare.scala","73191cb045aa9a119e79e6cac7d28b74ea1f2e8f"]],"lastModifiedTimes":[]}}]
