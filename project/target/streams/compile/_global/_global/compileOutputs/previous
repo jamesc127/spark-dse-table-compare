@@ -1,1 +1,1 @@
-["sbt.Task[scala.collection.Seq[java.nio.file.Path]]",["/Users/jamescolvin/Library/Programs/spark-table-compare/project/target/streams/compile/compileOutputs/_global/streams/inc_compile_2.12.zip"]]
+["sbt.Task[scala.collection.Seq[java.nio.file.Path]]",["/Users/jamescolvin/Library/Programs/spark-dse-table-compare/project/target/streams/compile/compileOutputs/_global/streams/inc_compile_2.12.zip"]]

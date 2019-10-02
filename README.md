@@ -1,4 +1,4 @@
-spark-table-compare
+spark-dse-table-compare
 ====
 # Overview
 The intention of this repo is to be used with a DSE Analytics cluster to compare the data in two tables that have the same schema. 
