@@ -10,7 +10,7 @@ The number of columns in the `csv` will be `(number of columns in t1 + number of
 #### Sample Output
 
 |t1_combinable_with_other_item|t2_combinable_with_other_item|t1_country_code|t2_country_code|t1_item_id|t2_item_id|
-|---                          |---                          |---            |---            |---       |---
+|---                          |---                          |---            |---            |---       |---       |
 |                        false|                         true|             US|             US|      1139|      1139|
 |                         true|                         true|             US|             MX|      1133|      1133|
 |                         true|                        false|             US|             US|      1135|      1135|
@@ -37,3 +37,6 @@ dse spark-submit --files /path/to/application.json \
 ```
 ## Building
 Any updates should be built with `sbt assembly`. Get [sbt assembly](https://github.com/sbt/sbt-assembly) here.
+
+### Thanks
+Many thanks to [Jim Hatcher](https://github.com/jhatcher9999) and [Alex Ott](https://github.com/alexott) for help and inspiration with this effort.
