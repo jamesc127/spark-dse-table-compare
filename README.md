@@ -7,6 +7,16 @@ If any differences are found, the values from both tables will be printed into t
 Each column of the `csv` will be prefixed with either `t1` or `t2` corresponding to either `master_table` or `compare_table` respectively so you know which value came from where.
 The number of columns in the `csv` will be `(number of columns in t1 + number of columns in t2)`.
 
+#### Sample Output
+
+|t1_combinable_with_other_item|t2_combinable_with_other_item|t1_country_code|t2_country_code|t1_item_id|t2_item_id|
+|---                          |---                          |---            |---            |---       |---
+|                        false|                         true|             US|             US|      1139|      1139|
+|                         true|                         true|             US|             MX|      1133|      1133|
+|                         true|                        false|             US|             US|      1135|      1135|
+|                         true|                         true|             CA|             US|      1137|      1137|
+|                        false|                         true|             US|             US|      1131|      1131|
+
 # Configuration File
 - `system_table` should not need to be changed as it is reading the system schema for the column names.
 - `master_table` is for the table name and keyspace of the primary table in the comparison, although since the tables have the same schema there is essentially no difference (one of the tables has to be first, right?).
@@ -26,4 +36,4 @@ dse spark-submit --files /path/to/application.json \
 --class "TableCompare" /path/to/spark-table-compare.jar
 ```
 ## Building
-Any updates should be built with `sbt assembly`
+Any updates should be built with `sbt assembly`. Get [sbt assembly](https://github.com/sbt/sbt-assembly) here.
