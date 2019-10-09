@@ -33,6 +33,8 @@ The number of columns in the `csv` will be `(number of columns in t1 + number of
 dse spark-submit --files /path/to/application.json \
 --conf spark.executor.extraJavaOptions=-Dconfig.file=/path/to/application.json \
 --conf spark.driver.extraJavaOptions=-Dconfig.file=/path/to/application.json \
+--deploy-mode cluster \
+--supervise \
 --class "TableCompare" /path/to/spark-table-compare.jar
 ```
 ## Building
