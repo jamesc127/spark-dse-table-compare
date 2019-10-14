@@ -4,11 +4,11 @@
     "table"       : "columns"
   },
   "master_table"  : {
-    "keyspace"    : "uline_test",
+    "keyspace"    : "uline_test_col",
     "table"       : "item_by_item_id"
   },
   "compare_table" : {
-    "keyspace"    : "uline_test",
+    "keyspace"    : "uline_test_col",
     "table"       : "item_by_item_id_2"
   },
   "join_column"   : {

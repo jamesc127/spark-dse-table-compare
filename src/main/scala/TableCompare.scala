@@ -1,5 +1,8 @@
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import com.typesafe.config.ConfigFactory
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types._
 
 object TableCompare {
   def main(args: Array[String]): Unit = {
@@ -39,6 +42,24 @@ object TableCompare {
     t2.createOrReplaceTempView("t2")
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join""")
-    results.coalesce(1).write.option("header","true").csv(config.getString("csv_path.output_path"))
+
+    val value = udf((arr: Array[Any]) => arr.mkString(" "))
+
+    def changeColumns(df:DataFrame):DataFrame = {
+      val resultsColumns = df.columns.toIterator
+      for (c <- resultsColumns){
+        df.schema(c).dataType match {
+          case ArrayType(IntegerType,true) => df.withColumn(c,value(col(c)))
+          case _ => df
+        }
+      }
+      df
+    }
+
+    val resultsString = changeColumns(results)
+
+//    val resultsString = results.select(results.columns.map(c => col(c).toString()))
+
+    resultsString.coalesce(1).write.option("header","true").csv(config.getString("csv_path.output_path"))
   }
 }
