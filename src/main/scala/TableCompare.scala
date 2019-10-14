@@ -43,20 +43,42 @@ object TableCompare {
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join""")
 
-    val value = udf((arr: Array[Any]) => arr.mkString(" "))
+    //function that will put everything in a df into a list or sequence or something
 
-    def changeColumns(df:DataFrame):DataFrame = {
-      val resultsColumns = df.columns.toIterator
-      for (c <- resultsColumns){
-        df.schema(c).dataType match {
-          case ArrayType(IntegerType,true) => df.withColumn(c,value(col(c)))
-          case _ => df
-        }
-      }
-      df
+
+
+    def newDfMethod(d1:DataFrame, d1It:Iterator[String]):DataFrame = {
+      val castDf = (d2:DataFrame, d2Col:String) => d2.withColumn(d2Col, d2(d2Col).cast(StringType))
+      val itCheck = (d3:DataFrame,itToCheck:Iterator[String]) => if (itToCheck.hasNext) castDf(d3,itToCheck.next())
+      val newDf = itCheck(d1,d1It).asInstanceOf[DataFrame]
+      newDf
     }
 
-    val resultsString = changeColumns(results)
+
+
+
+//    val value = udf((arr: Array[Any]) => arr.mkString(", "))
+
+//    def changeColumns(df:DataFrame):DataFrame = {
+//      for (c <- df.columns.toIterator){
+//        println(c.toString+" "+df.schema(c).dataType.toString)
+//        df.schema(c).dataType match {
+//          case ArrayType(IntegerType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(StringType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(ShortType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(LongType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(FloatType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(DoubleType,true) => df.select(df(c).cast(StringType).as(c))
+////          case ArrayType(DecimalType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(TimestampType,true) => df.select(df(c).cast(StringType).as(c))
+//          case ArrayType(DateType,true) => df.select(df(c).cast(StringType).as(c))
+//          case _ => df
+//        }
+//      }
+//      df
+//    }
+
+    val resultsString = newDfMethod(results,results.columns.toIterator)
 
 //    val resultsString = results.select(results.columns.map(c => col(c).toString()))
 
