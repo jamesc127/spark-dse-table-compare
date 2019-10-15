@@ -43,16 +43,15 @@ object TableCompare {
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join""")
 
-    def tryAgain(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
+    def updateColumnTypes(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
       def dfHelper(dFrame:DataFrame,col:String):DataFrame = {
         if (columnIt.isEmpty) dFrame
-//        else dfHelper(dFrame.withColumn(col,dFrame(col).cast(StringType)),columnIt.next())
         else dfHelper(dFrame.withColumn(col,concat_ws(", ",dFrame(col))),columnIt.next())
       }
       dfHelper(df,columnIt.next())
     }
 
-    val resultsString = tryAgain(results,results.columns.toIterator)
+    val resultsString = updateColumnTypes(results,results.columns.toIterator)
     resultsString.coalesce(1).write.option("header","true").csv(config.getString("csv_path.output_path"))
   }
 }
