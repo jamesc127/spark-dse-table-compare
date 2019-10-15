@@ -58,6 +58,6 @@ object TableCompare {
     }
 
     val resultsString = updateColumnTypes(results,results.columns.toIterator)
-    resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path.output_path"))
+//    resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path.output_path"))
   }
 }
