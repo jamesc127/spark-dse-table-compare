@@ -6,7 +6,7 @@ object TableCompare {
   def main(args: Array[String]): Unit = {
 
     val spark             = SparkSession.builder.appName("Table Compare").getOrCreate()
-//    val spark               = SparkSession.builder.appName("Table Compare").master("local").getOrCreate()
+//    val spark               = SparkSession.builder.master("local").appName("Table Compare").getOrCreate()
     val config              = ConfigFactory.load()
     val master_table        = config.getString("master_table.table")
     val master_keyspace     = config.getString("master_table.keyspace")
@@ -44,8 +44,8 @@ object TableCompare {
     t1.createOrReplaceTempView("t1")
     t2.createOrReplaceTempView("t2")
 
-    val clustering1Join = if (config.getString("master_table.clustering1") != null && config.getString("compare_table.clustering1") != null) s""" AND t1.$masterClustering1 = t2.$compareClustering1""" else null
-    val clustering2Join = if (config.getString("master_table.clustering2") != null && config.getString("compare_table.clustering2") != null) s""" AND t1.$masterClustering2 = t2.$compareClustering2""" else null
+    val clustering1Join = if (config.getString("master_table.clustering1") != "null" && config.getString("compare_table.clustering1") != "null") s""" AND t1.$masterClustering1 = t2.$compareClustering1""" else null
+    val clustering2Join = if (config.getString("master_table.clustering2") != "null" && config.getString("compare_table.clustering2") != "null") s""" AND t1.$masterClustering2 = t2.$compareClustering2""" else null
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join $clustering1Join $clustering2Join""")
 

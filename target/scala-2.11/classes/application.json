@@ -5,11 +5,15 @@
   },
   "master_table"  : {
     "keyspace"    : "uline_test_col",
-    "table"       : "item_by_item_id"
+    "table"       : "item_by_item_id",
+    "clustering1" : "country_code",
+    "clustering2" : "language_type_code"
   },
   "compare_table" : {
     "keyspace"    : "uline_test_col",
-    "table"       : "item_by_item_id_2"
+    "table"       : "item_by_item_id_2",
+    "clustering1" : "country_code",
+    "clustering2" : "language_type_code"
   },
   "join_column"   : {
     "t1_name"     : "item_id",
