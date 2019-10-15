@@ -43,30 +43,16 @@ object TableCompare {
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join""")
 
-
-//    def newDfMethod(d1:DataFrame, d1It:Iterator[String]):DataFrame = {
-//      val castDf = (d2:DataFrame, d2Col:String) => d2.withColumn(d2Col, d2(d2Col).cast(StringType))
-//      val itCheck = (d3:DataFrame,itToCheck:Iterator[String]) => if (itToCheck.hasNext) castDf(d3,itToCheck.next())
-//      val newDf = itCheck(d1,d1It).asInstanceOf[DataFrame]
-//      newDf
-//    }
-//
-//    val resultsString = newDfMethod(results,results.columns.toIterator)
-
-//    val resultsString = results.select(results.columns.map(c => results(c).cast(StringType))
-
-    def castArrayToString(dFrame: DataFrame):DataFrame = {
-      val columnsIt = dFrame.columns.toIterator
-      def loopDF(iterator: Iterator[String]):DataFrame = {
-        do {
-          dFrame.withColumn(iterator.next(),dFrame(iterator.next()).cast(StringType))
-        } while (columnsIt.hasNext)
+    def tryAgain(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
+      def dfHelper(dFrame:DataFrame,col:String):DataFrame = {
+        if (columnIt.isEmpty) dFrame
+//        else dfHelper(dFrame.withColumn(col,dFrame(col).cast(StringType)),columnIt.next())
+        else dfHelper(dFrame.withColumn(col,concat_ws(", ",dFrame(col))),columnIt.next())
       }
-      val newDF = loopDF(columnsIt)
-      newDF
+      dfHelper(df,columnIt.next())
     }
 
-
-//    resultsString.coalesce(1).write.option("header","true").csv(config.getString("csv_path.output_path"))
+    val resultsString = tryAgain(results,results.columns.toIterator)
+    resultsString.coalesce(1).write.option("header","true").csv(config.getString("csv_path.output_path"))
   }
 }
