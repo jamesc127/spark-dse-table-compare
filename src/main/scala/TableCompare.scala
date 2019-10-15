@@ -44,8 +44,8 @@ object TableCompare {
     t1.createOrReplaceTempView("t1")
     t2.createOrReplaceTempView("t2")
 
-    val clustering1Join = if (config.getString("master_table.clustering1") != "null" && config.getString("compare_table.clustering1") != "null") s""" AND t1.$masterClustering1 = t2.$compareClustering1""" else ""
-    val clustering2Join = if (config.getString("master_table.clustering2") != "null" && config.getString("compare_table.clustering2") != "null") s""" AND t1.$masterClustering2 = t2.$compareClustering2""" else ""
+    val clustering1Join = if (config.getString("master_table.clustering1") != "null" && config.getString("compare_table.clustering1") != "null") s""" AND t1.$masterClustering1 = t2.$compareClustering1""" else " "
+    val clustering2Join = if (config.getString("master_table.clustering2") != "null" && config.getString("compare_table.clustering2") != "null") s""" AND t1.$masterClustering2 = t2.$compareClustering2""" else " "
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join $clustering1Join $clustering2Join""")
 
