@@ -7,13 +7,17 @@
     "keyspace"    : "uline_test_col",
     "table"       : "item_by_item_id",
     "clustering1" : "country_code",
-    "clustering2" : "language_type_code"
+    "clustering2" : "language_type_code",
+    "clustering3" : "null",
+    "clustering4" : "null"
   },
   "compare_table" : {
     "keyspace"    : "uline_test_col",
     "table"       : "item_by_item_id_2",
     "clustering1" : "country_code",
-    "clustering2" : "language_type_code"
+    "clustering2" : "language_type_code",
+    "clustering3" : "null",
+    "clustering4" : "null"
   },
   "join_column"   : {
     "t1_name"     : "item_id",
