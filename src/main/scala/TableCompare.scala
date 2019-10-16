@@ -19,9 +19,7 @@ object TableCompare {
     val columns_to_drop     = config.getStringList("exclude_columns.column_list").asScala
 
     val columns = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> config.getString("system_table.table"), "keyspace" -> config.getString("system_table.keyspace"))).load()
-    val columnsList = columns.filter(!col("column_name").isin(columns_to_drop:_*))
-
-    columnsList.createOrReplaceTempView("columns")
+    columns.filter(!col("column_name").isin(columns_to_drop:_*)).createOrReplaceTempView("columns")
 
     val df = spark.sql(s"""
     SELECT concat('t1.', column_name, ' AS t1_', column_name, ', t2.', column_name, ' AS t2_', column_name, ',') AS select_clause_fields
@@ -36,11 +34,8 @@ object TableCompare {
     spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> master_table, "keyspace" -> master_keyspace)).load().createOrReplaceTempView("table1")
     spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> compare_table, "keyspace" -> compare_keyspace)).load().createOrReplaceTempView("table2")
 
-    val t1 = spark.sql("SELECT * FROM table1 EXCEPT SELECT * FROM table2")
-    val t2 = spark.sql("SELECT * FROM table2 EXCEPT SELECT * FROM table1")
-
-    t1.createOrReplaceTempView("t1")
-    t2.createOrReplaceTempView("t2")
+    spark.sql("SELECT * FROM table1 EXCEPT SELECT * FROM table2").createOrReplaceTempView("t1")
+    spark.sql("SELECT * FROM table2 EXCEPT SELECT * FROM table1").createOrReplaceTempView("t2")
 
     val clustering1Join = if (clustering_join1 != "null" && clustering_join1 != "") s""" AND t1.$clustering_join1 = t2.$clustering_join1""" else ""
     val clustering2Join = if (clustering_join2 != "null" && clustering_join2 != "") s""" AND t1.$clustering_join2 = t2.$clustering_join2""" else ""
