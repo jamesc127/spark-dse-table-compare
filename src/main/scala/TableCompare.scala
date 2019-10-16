@@ -5,8 +5,7 @@ import org.apache.spark.sql.functions._
 object TableCompare {
   def main(args: Array[String]): Unit = {
 
-    val spark             = SparkSession.builder.appName("Table Compare").getOrCreate()
-//    val spark               = SparkSession.builder.master("local").appName("Table Compare").getOrCreate()
+    val spark               = SparkSession.builder.appName("Table Compare").getOrCreate()
     val config              = ConfigFactory.load()
     val master_table        = config.getString("master_table.table")
     val master_keyspace     = config.getString("master_table.keyspace")
@@ -18,6 +17,10 @@ object TableCompare {
     val compareClustering1  = config.getString("compare_table.clustering1")
     val masterClustering2   = config.getString("master_table.clustering2")
     val compareClustering2  = config.getString("compare_table.clustering2")
+    val masterClustering3   = config.getString("master_table.clustering3")
+    val compareClustering3  = config.getString("compare_table.clustering3")
+    val masterClustering4   = config.getString("master_table.clustering4")
+    val compareClustering4  = config.getString("compare_table.clustering4")
 
     val columns = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> config.getString("system_table.table"), "keyspace" -> config.getString("system_table.keyspace"))).load()
     columns.createOrReplaceTempView("columns")
@@ -46,8 +49,10 @@ object TableCompare {
 
     val clustering1Join = if (config.getString("master_table.clustering1") != "null" && config.getString("compare_table.clustering1") != "null") s""" AND t1.$masterClustering1 = t2.$compareClustering1""" else ""
     val clustering2Join = if (config.getString("master_table.clustering2") != "null" && config.getString("compare_table.clustering2") != "null") s""" AND t1.$masterClustering2 = t2.$compareClustering2""" else ""
+    val clustering3Join = if (config.getString("master_table.clustering3") != "null" && config.getString("compare_table.clustering3") != "null") s""" AND t1.$masterClustering3 = t2.$compareClustering3""" else ""
+    val clustering4Join = if (config.getString("master_table.clustering4") != "null" && config.getString("compare_table.clustering4") != "null") s""" AND t1.$masterClustering4 = t2.$compareClustering4""" else ""
 
-    val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join $clustering1Join $clustering2Join""")
+    val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$t1_join = t2.$t2_join$clustering1Join$clustering2Join$clustering3Join$clustering4Join""")
 
     def updateColumnTypes(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
       def dfHelper(dFrame:DataFrame,col:String):DataFrame = {
