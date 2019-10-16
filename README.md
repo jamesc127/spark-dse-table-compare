@@ -21,10 +21,11 @@ The number of columns in the `csv` will be `(number of columns in t1 + number of
 - `system_table` should not need to be changed as it is reading the system schema for the column names.
 - `master_table` is for the table name and keyspace of the primary table in the comparison, although since the tables have the same schema there is essentially no difference (one of the tables has to be first, right?).
 - `compare_table` is for the table name and keyspace of the second table in the comparison.
-- `clusteringX` under `master` and `compare` tables are additional join conditions that should be used to ensure that the ouput `csv` is formatted properly.
-    - if no clustering columns are used (or if there's only one row), enter `"null"` for the value.
-- `join_column` is the column from `t1` and `t2` to perform the join.
+- `join_column`: `primary` is the column from `t1` and `t2` to perform the join.
+- `clusteringX` are additional join conditions for clustering columns that should be used to ensure that the ouput `csv` is formatted properly.
+- If no clustering columns are used (or if there's only one row), enter `""` or `"null"` for the value.
 - `csv_path` is for the output path of the resulting csv file. Best stored on `dsefs` unless testing locally.
+- `exclude_columns` is a string list of columns you wish to exclude from the comparison. Since the tables have the same schema, the columns will be dropped from both tables. They will not be present in the output file of the job.
 
 # Spark-Submit
 - Follow the instructions on [spark-submit](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/tools/dse/dseSpark-submit.html)
