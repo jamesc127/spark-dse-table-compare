@@ -4,17 +4,17 @@
     "table"         : "columns"
   },
   "master_table"    : {
-    "keyspace"      : "uline_test_col",
-    "table"         : "item_by_item_id"
+    "keyspace"      : "compare",
+    "table"         : "catalog_master_by_country_and_code_dse"
   },
   "compare_table"   : {
-    "keyspace"      : "uline_test_col",
-    "table"         : "item_by_item_id_2"
+    "keyspace"      : "compare",
+    "table"         : "catalog_master_by_country_and_code_luw"
   },
   "join_column"     : {
-    "primary"       : "item_id",
-    "clustering1"   : "country_code",
-    "clustering2"   : "language_type_code",
+    "primary"       : "country_code",
+    "clustering1"   : "catalog_code",
+    "clustering2"   : "",
     "clustering3"   : "",
     "clustering4"   : ""
   },
@@ -23,6 +23,7 @@
   },
   "exclude_columns" : {
     "column_list"   : [
+      "last_changed"
     ]
   }
 }

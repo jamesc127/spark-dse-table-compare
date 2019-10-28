@@ -4,17 +4,17 @@
     "table"         : "columns"
   },
   "master_table"    : {
-    "keyspace"      : "uline_test_col",
-    "table"         : "item_by_item_id"
+    "keyspace"      : "compare",
+    "table"         : "catalog_master_by_country_and_code_dse"
   },
   "compare_table"   : {
-    "keyspace"      : "uline_test_col",
-    "table"         : "item_by_item_id_2"
+    "keyspace"      : "compare",
+    "table"         : "catalog_master_by_country_and_code_luw"
   },
   "join_column"     : {
-    "primary"       : "item_id",
-    "clustering1"   : "country_code",
-    "clustering2"   : "language_type_code",
+    "primary"       : "country_code",
+    "clustering1"   : "catalog_code",
+    "clustering2"   : "",
     "clustering3"   : "",
     "clustering4"   : ""
   },
@@ -23,26 +23,8 @@
   },
   "exclude_columns" : {
     "column_list"   : [
-      "activation_date",
-      "base_uom_code",
-      "branch_velocity_type",
-      "bypass_availability_check",
-      "carton_quantity",
-      "catalog_first_appearance",
-      "catalog_last_appearance",
-      "combinable_with_other_item",
-      "country_id",
-      "custom_designer_type_code",
-      "custom_designer_type_description",
-      "custom_item",
-      "custom_product_type_description",
-      "custom_product_type_number",
-      "dc_velocity_type",
-      "delete_flag_code",
-      "display_order",
-      "employee_purchase_allowed",
-      "free_no_charge_code",
-      "free_no_charge_description"
+      "last_changed",
+      "expected_response_percent"
     ]
   }
 }
