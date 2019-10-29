@@ -5,16 +5,16 @@
   },
   "master_table"    : {
     "keyspace"      : "compare",
-    "table"         : "catalog_master_by_country_and_code_dse"
+    "table"         : "price_tiers_by_catalog_code_country_item"
   },
   "compare_table"   : {
     "keyspace"      : "compare",
-    "table"         : "catalog_master_by_country_and_code_luw"
+    "table"         : "price_tiers_by_catalog_code_country_item_dse"
   },
   "join_column"     : {
-    "primary"       : "country_code",
+    "primary"       : "system_country",
     "clustering1"   : "catalog_code",
-    "clustering2"   : "",
+    "clustering2"   : "item_number",
     "clustering3"   : "",
     "clustering4"   : ""
   },
@@ -23,7 +23,8 @@
   },
   "exclude_columns" : {
     "column_list"   : [
-      "last_changed"
+      "catalog_page_number",
+      "catalog_picture_group"
     ]
   }
 }

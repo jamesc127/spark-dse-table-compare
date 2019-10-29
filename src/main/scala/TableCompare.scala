@@ -2,7 +2,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.sql.functions._
 import scala.collection.JavaConverters._
-import org.apache.spark.sql.types.DecimalType
+import org.apache.spark.sql.types.{ArrayType, DecimalType, StructType}
 
 object TableCompare {
   def main(args: Array[String]): Unit = {
@@ -22,8 +22,8 @@ object TableCompare {
     val columns = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> config.getString("system_table.table"), "keyspace" -> config.getString("system_table.keyspace"))).load()
     columns.filter(!col("column_name").isin(columns_to_drop:_*)).createOrReplaceTempView("columns")
 
-    val decimalColumnsDf = spark.sql(s"""SELECT column_name FROM columns WHERE keyspace_name = '$master_keyspace' AND table_name = '$master_table' AND type = 'decimal'""")
-    val decimalColumns = decimalColumnsDf.select("column_name").rdd.map(r => r(0)).collect().toList.asInstanceOf[List[String]]
+    val columnsDF = spark.sql(s"""SELECT column_name FROM columns WHERE keyspace_name = '$master_keyspace' AND table_name = '$master_table'""").rdd.map(r => r(0)).collect().toList.asInstanceOf[List[String]]
+//    val decimalColumns = decimalColumnsDf.select("column_name").rdd.map(r => r(0)).collect().toList.asInstanceOf[List[String]]
 
     val df = spark.sql(s"""
     SELECT concat('t1.', column_name, ' AS t1_', column_name, ', t2.', column_name, ' AS t2_', column_name, ',') AS select_clause_fields
@@ -38,24 +38,32 @@ object TableCompare {
     val table1 = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> master_table, "keyspace" -> master_keyspace)).load()
     val table2 = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> compare_table, "keyspace" -> compare_keyspace)).load()
 
-    def updateDecimalTypes(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
+    def matchColumnTypes(df:DataFrame,col:String): DataFrame = {
+      df.schema(col).dataType match {
+        //        case ArrayType(_,_) => df.withColumn(col,concat_ws(", ",df(col)))
+        case StructType(_) => df.withColumn(col,hash(df(col)))
+        case ArrayType(StructType(_),_) => df.withColumn(col,hash(df(col)))
+        case DecimalType() => df.withColumn(col,df(col).cast(DecimalType(10,2)))
+        case _ => df
+      }
+    }
+
+    def updateTypes(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
       def dfHelper(dFrame:DataFrame,col:String):DataFrame = {
         if (columnIt.isEmpty) dFrame
-        else dfHelper(dFrame.withColumn(col,dFrame(col).cast(DecimalType(10,2))),columnIt.next())
+        else dfHelper(matchColumnTypes(dFrame,col),columnIt.next())
       }
       dfHelper(df,columnIt.next())
     }
 
-    val table1Updated = updateDecimalTypes(table1,decimalColumns.toIterator)
-    val table2Updated = updateDecimalTypes(table2,decimalColumns.toIterator)
+    val table1Updated = updateTypes(table1,columnsDF.toIterator)
+    val table2Updated = updateTypes(table2,columnsDF.toIterator)
 
     table1Updated.createOrReplaceTempView("table1")
     table2Updated.createOrReplaceTempView("table2")
 
     spark.sql("SELECT * FROM table1 EXCEPT SELECT * FROM table2").createOrReplaceTempView("t1")
     spark.sql("SELECT * FROM table2 EXCEPT SELECT * FROM table1").createOrReplaceTempView("t2")
-    println(spark.sql("SELECT * FROM t1").show(500,false).toString)
-    println(spark.sql("SELECT * FROM t2").show(500,false).toString)
 
     val clustering1Join = if (clustering_join1 != "null" && clustering_join1 != "") s""" AND t1.$clustering_join1 = t2.$clustering_join1""" else ""
     val clustering2Join = if (clustering_join2 != "null" && clustering_join2 != "") s""" AND t1.$clustering_join2 = t2.$clustering_join2""" else ""
