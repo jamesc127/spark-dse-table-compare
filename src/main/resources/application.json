@@ -5,16 +5,16 @@
   },
   "master_table"    : {
     "keyspace"      : "compare",
-    "table"         : "price_tiers_by_catalog_code_country_item"
+    "table"         : "catalog_master_by_country_and_code_luw"
   },
   "compare_table"   : {
     "keyspace"      : "compare",
-    "table"         : "price_tiers_by_catalog_code_country_item_dse"
+    "table"         : "catalog_master_by_country_and_code_dse"
   },
   "join_column"     : {
-    "primary"       : "system_country",
+    "primary"       : "country_code",
     "clustering1"   : "catalog_code",
-    "clustering2"   : "item_number",
+    "clustering2"   : "",
     "clustering3"   : "",
     "clustering4"   : ""
   },
@@ -27,8 +27,7 @@
     ]
   },
   "join_list"       : [
-    "system_country",
-    "catalog_code",
-    "item_number"
+    "country_code",
+    "catalog_code"
   ]
 }
