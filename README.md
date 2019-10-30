@@ -43,5 +43,8 @@ dse spark-submit --files /path/to/application.json \
 ## Building
 Any updates should be built with `sbt assembly`. Get [sbt assembly](https://github.com/sbt/sbt-assembly) here.
 
+## TODO
+- [ ] add in blurbs about column conversions
+
 ### Thanks
 Many thanks to [Jim Hatcher](https://github.com/jhatcher9999) and [Alex Ott](https://github.com/alexott) for help and inspiration with this effort.

@@ -23,8 +23,7 @@
   },
   "exclude_columns" : {
     "column_list"   : [
-      "catalog_page_number",
-      "catalog_picture_group"
+      "last_changed"
     ]
   }
 }

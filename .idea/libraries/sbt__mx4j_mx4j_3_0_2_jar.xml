@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="sbt: mx4j:mx4j:3.0.2:jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Caches/Coursier/v1/https/repo1.maven.org/maven2/mx4j/mx4j/3.0.2/mx4j-3.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
