@@ -79,18 +79,19 @@ object TableCompare {
     table2KeyAndHash.createOrReplaceTempView("table2KeyAndHash")
 
     val Table1ExceptTable2 = spark.sql("SELECT * FROM table1KeyAndHash EXCEPT SELECT * FROM table2KeyAndHash")
+    println("Table 1 Except Table 2"+"\r"+Table1ExceptTable2.show(100,false)) //TODO remove
     val Table2ExceptTable1 = spark.sql("SELECT * FROM table2KeyAndHash EXCEPT SELECT * FROM table1KeyAndHash")
+    println("Table 2 Except Table 1"+"\r"+Table2ExceptTable1.show(100,false)) //TODO remove
+
+    val ExceptedJoinDf = Table1ExceptTable2.join(Table2ExceptTable1,joinConditions,"fullouter")
+    println("Full Outer Join of both EXCEPT tables"+"\r"+ExceptedJoinDf.show(100,false)) //TODO remove
 
     val table1Rejoined = Table1ExceptTable2.join(table1Drop,joinConditions,"inner")
+    println("Table 1 hashed re-joined with original, inner"+"\r"+table1Rejoined.show(100,false)) //TODO remove
     val table2Rejoined = Table2ExceptTable1.join(table2Drop,joinConditions,"inner")
-
+    println("Table 2 hashed re-joined with original, inner"+"\r"+table2Rejoined.show(100,false)) //TODO remove
     table1Rejoined.createOrReplaceTempView("t1")
     table2Rejoined.createOrReplaceTempView("t2")
-
-    //create the hash of the row
-    //get a df with the primary key and hash only
-    //do the except on the df's with PK and hash only
-    //join the resulting DF with the two whole DF's, leaving out rows that aren't joined
 
     val clustering1Join = if (clustering_join1 != "null" && clustering_join1 != "") s""" AND t1.$clustering_join1 = t2.$clustering_join1""" else ""
     val clustering2Join = if (clustering_join2 != "null" && clustering_join2 != "") s""" AND t1.$clustering_join2 = t2.$clustering_join2""" else ""
@@ -98,7 +99,7 @@ object TableCompare {
     val clustering4Join = if (clustering_join4 != "null" && clustering_join4 != "") s""" AND t1.$clustering_join4 = t2.$clustering_join4""" else ""
 
     val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$primary_join = t2.$primary_join$clustering1Join$clustering2Join$clustering3Join$clustering4Join""")
-    println(results.show(200,false))//TODO remove
+    println("Final Results"+"\r"+results.show(100,false))//TODO remove
     val resultsString = updateColumnsToString(updateTypes(results,results.columns.toIterator),results.columns.toIterator)
     resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path.output_path"))
   }
