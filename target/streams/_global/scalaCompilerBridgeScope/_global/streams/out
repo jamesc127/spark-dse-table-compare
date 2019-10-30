@@ -1,1 +1,0 @@
-[0m[[0m[33mwarn[0m] [0m[0minsecure HTTP request is deprecated 'http://dl.bintray.com/spark-packages/maven'; switch to HTTPS or opt-in as ("Spark Packages Repo" at "http://dl.bintray.com/spark-packages/maven").withAllowInsecureProtocol(true)[0m

@@ -25,5 +25,10 @@
     "column_list"   : [
       "last_changed"
     ]
-  }
+  },
+  "join_list"       : [
+    "system_country",
+    "catalog_code",
+    "item_number"
+  ]
 }
