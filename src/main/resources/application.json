@@ -1,8 +1,4 @@
 {
-  "system_table"        : {
-    "keyspace"          : "system_schema",
-    "table"             : "columns"
-  },
   "master_table"        : {
     "keyspace"          : "compare",
     "table"             : "price_tiers_by_catalog_code_country_item"
@@ -11,24 +7,13 @@
     "keyspace"          : "compare",
     "table"             : "price_tiers_by_catalog_code_country_item_dse"
   },
-  "join_column"         : {
-    "primary"           : "",
-    "clustering1"       : "",
-    "clustering2"       : "",
-    "clustering3"       : "",
-    "clustering4"       : ""
-  },
-  "csv_path"            : {
-    "output_path"       : "file:///Users/jamescolvin/Downloads/dse-6.7.5/lib/data/spark/item_by_item_id_diff"
-  },
-  "exclude_columns"     : {
-    "column_list"       : [
-      "last_changed"
-    ]
-  },
   "primary_key_columns" : [
     "system_country",
     "catalog_code",
     "item_number"
-  ]
+  ],
+  "exclude_columns"     : [
+    "last_changed"
+  ],
+  "csv_path"            : "file:///Users/jamescolvin/Downloads/dse-6.7.5/lib/data/spark/item_by_item_id_diff"
 }
