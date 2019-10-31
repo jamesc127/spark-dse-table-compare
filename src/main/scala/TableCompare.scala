@@ -66,11 +66,18 @@ object TableCompare {
     table1Hash.createOrReplaceTempView("table1Hashed")
     table2Hash.createOrReplaceTempView("table2Hashed")
 
-    val clustering1Select = if (clustering_join1 != "null" && clustering_join1 != "") s""", $clustering_join1""" else ""
-    val clustering2Select = if (clustering_join2 != "null" && clustering_join2 != "") s""", $clustering_join2""" else ""
-    val clustering3Select = if (clustering_join3 != "null" && clustering_join3 != "") s""", $clustering_join3""" else ""
-    val clustering4Select = if (clustering_join4 != "null" && clustering_join4 != "") s""", $clustering_join4""" else ""
-    val dfWithHashSelect = s"""$primary_join$clustering1Select$clustering2Select$clustering3Select$clustering4Select"""
+//    val clustering1Select = if (clustering_join1 != "null" && clustering_join1 != "") s""", $clustering_join1""" else ""
+//    val clustering2Select = if (clustering_join2 != "null" && clustering_join2 != "") s""", $clustering_join2""" else ""
+//    val clustering3Select = if (clustering_join3 != "null" && clustering_join3 != "") s""", $clustering_join3""" else ""
+//    val clustering4Select = if (clustering_join4 != "null" && clustering_join4 != "") s""", $clustering_join4""" else ""
+//    val dfWithHashSelect = s"""$primary_join$clustering1Select$clustering2Select$clustering3Select$clustering4Select"""
+
+    val dfWithHashSelect = new StringBuilder
+    for (j <- joinConditions){
+      if (j == joinConditions.head) dfWithHashSelect.append(j)
+      else dfWithHashSelect.append(s""", $j""")
+    }
+    println("For loop select statement: " + dfWithHashSelect) //TODO remove
 
     val table1KeyAndHash = spark.sql(s"""SELECT $dfWithHashSelect, hash FROM table1Hashed""")
     val table2KeyAndHash = spark.sql(s"""SELECT $dfWithHashSelect, hash FROM table2Hashed""")
@@ -93,12 +100,19 @@ object TableCompare {
     table1Rejoined.createOrReplaceTempView("t1")
     table2Rejoined.createOrReplaceTempView("t2")
 
-    val clustering1Join = if (clustering_join1 != "null" && clustering_join1 != "") s""" AND t1.$clustering_join1 = t2.$clustering_join1""" else ""
-    val clustering2Join = if (clustering_join2 != "null" && clustering_join2 != "") s""" AND t1.$clustering_join2 = t2.$clustering_join2""" else ""
-    val clustering3Join = if (clustering_join3 != "null" && clustering_join3 != "") s""" AND t1.$clustering_join3 = t2.$clustering_join3""" else ""
-    val clustering4Join = if (clustering_join4 != "null" && clustering_join4 != "") s""" AND t1.$clustering_join4 = t2.$clustering_join4""" else ""
+//    val clustering1Join = if (clustering_join1 != "null" && clustering_join1 != "") s""" AND t1.$clustering_join1 = t2.$clustering_join1""" else ""
+//    val clustering2Join = if (clustering_join2 != "null" && clustering_join2 != "") s""" AND t1.$clustering_join2 = t2.$clustering_join2""" else ""
+//    val clustering3Join = if (clustering_join3 != "null" && clustering_join3 != "") s""" AND t1.$clustering_join3 = t2.$clustering_join3""" else ""
+//    val clustering4Join = if (clustering_join4 != "null" && clustering_join4 != "") s""" AND t1.$clustering_join4 = t2.$clustering_join4""" else ""
 
-    val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON t1.$primary_join = t2.$primary_join$clustering1Join$clustering2Join$clustering3Join$clustering4Join""")
+    val resultsJoinConditions = new StringBuilder
+    for (j <- joinConditions){
+      if (j == joinConditions.head) resultsJoinConditions.append(s"""t1.$j = t2.$j""")
+      else resultsJoinConditions.append(s""" AND t1.$j = t2.$j""")
+    }
+    println("Results join condition builder: " + resultsJoinConditions) //TODO remove
+
+    val results = spark.sql(s"""SELECT $select_clause_trim FROM t1 FULL OUTER JOIN t2 ON $resultsJoinConditions""")
     println("Final Results"+"\r"+results.show(100,false))//TODO remove
     val resultsString = updateColumnsToString(updateTypes(results,results.columns.toIterator),results.columns.toIterator)
     resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path.output_path"))
