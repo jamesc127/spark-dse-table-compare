@@ -25,7 +25,7 @@ object TableCompare {
 
     def matchColumnTypes(df:DataFrame,col:String): DataFrame = {
       df.schema(col).dataType match {
-        case ArrayType(StructType(_),_) => df.withColumn(col,hash(df(col)))
+        case ArrayType(StructType(_),_) => df.withColumn(col,hash(df(col))) //hashes a frozen<list<udt>> before comparing
         case DecimalType() => df.withColumn(col,df(col).cast(DecimalType(10,2)))
         case _ => df
       }
