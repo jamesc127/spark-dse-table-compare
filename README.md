@@ -66,8 +66,6 @@ The output of the comparison (the rows that are different between the tables) ar
   "csv_path"            : "file:///Users/jamescolvin/Downloads/dse-6.7.5/lib/data/spark/item_by_item_id_diff"
 }
 ```
-# Data Type Conversions
-Several times in the testing process we ran into issues with Spark data types being incompatible with the output `tsv` or with some part of the comparison.
 # Spark-Submit
 - Follow the instructions on [spark-submit](https://docs.datastax.com/en/dse/6.7/dse-dev/datastax_enterprise/tools/dse/dseSpark-submit.html)
 - Submit on the cluster spark master
@@ -83,9 +81,16 @@ dse spark-submit --files /path/to/application.json \
 ```
 ## Building
 Any updates should be built with `sbt assembly`. Get [sbt assembly](https://github.com/sbt/sbt-assembly) here.
-
-## TODO
-- [ ] add in blurbs about column conversions
-
+## Data Type Conversions
+Several times in the testing process we ran into issues with Spark data types being incompatible with the output `tsv` or with some part of the comparison. There is a method in the comparison (`matchColumnTypes`) where columns can be manipulated into whichever form works best.
+```scala
+def matchColumnTypes(df:DataFrame,col:String): DataFrame = {
+      df.schema(col).dataType match {
+        case ArrayType(StructType(_),_) => df.withColumn(col,hash(df(col))) //hashes a frozen<list<udt>> before comparing
+        case DecimalType() => df.withColumn(col,df(col).cast(DecimalType(10,2))) //decimal types get two digits after the decimal point
+        case _ => df
+      }
+    }
+```
 ### Thanks
 Many thanks to [Jim Hatcher](https://github.com/jhatcher9999) and [Alex Ott](https://github.com/alexott) for help and inspiration with this effort.

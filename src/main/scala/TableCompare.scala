@@ -26,7 +26,7 @@ object TableCompare {
     def matchColumnTypes(df:DataFrame,col:String): DataFrame = {
       df.schema(col).dataType match {
         case ArrayType(StructType(_),_) => df.withColumn(col,hash(df(col))) //hashes a frozen<list<udt>> before comparing
-        case DecimalType() => df.withColumn(col,df(col).cast(DecimalType(10,2)))
+        case DecimalType() => df.withColumn(col,df(col).cast(DecimalType(10,2))) //decimal types get two digits after the decimal point
         case _ => df
       }
     }
@@ -97,3 +97,4 @@ object TableCompare {
     resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path"))
   }
 }
+//TODO can we get collisions in murmer3?
