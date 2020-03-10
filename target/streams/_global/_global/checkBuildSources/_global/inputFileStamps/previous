@@ -1,1 +1,1 @@
-["sbt.Task[scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]",{"hashes":[["/Users/jamescolvin/Library/Programs/spark-dse-table-compare/build.sbt","5002c65b82e609d285b810d2983755f168aa7987"]],"lastModifiedTimes":[]}]
+["sbt.Task[scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]",{"hashes":[["/Users/jamescolvin/Library/Programs/spark-dse-table-compare/build.sbt","2a7a7fee7d35f6776e4460448ab80c502b208e3f"]],"lastModifiedTimes":[]}]

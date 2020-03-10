@@ -6,7 +6,7 @@ import org.apache.spark.sql.types.{ArrayType, DecimalType, StructType}
 
 object TableCompare {
   def main(args: Array[String]): Unit = {
-    val spark               = SparkSession.builder.appName("Table Compare").getOrCreate()
+    val spark               = SparkSession.builder.appName("Table Compare").master("local[1]").getOrCreate()
     val config              = ConfigFactory.load()
     val master_table        = config.getString("master_table.table")
     val master_keyspace     = config.getString("master_table.keyspace")
@@ -39,6 +39,20 @@ object TableCompare {
       dfHelper(df,columnIt.next())
     }
 
+    def sortCollections(df:DataFrame,columnIt:Iterator[String]):DataFrame = {
+      def dfHelper(df:DataFrame, mColumn:String):DataFrame = {
+        def matchCase(df:DataFrame): DataFrame = {
+          df.schema(mColumn).dataType match {
+            case ArrayType(_,_) => df.withColumn(mColumn,sort_array(df(mColumn))) //ensures a collection of whatever type is sorted
+            case _ => df
+          }
+        }
+        if (columnIt.isEmpty) df
+        else dfHelper(matchCase(df),columnIt.next())
+      }
+      dfHelper(df,columnIt.next())
+    }
+
     val columns = spark.read.format("org.apache.spark.sql.cassandra").options(Map("table" -> "columns", "keyspace" -> "system_schema")).load()
     val columnsDropped = columns.filter(!col("column_name").isin(columns_to_drop:_*))
     columnsDropped.createOrReplaceTempView("columns")
@@ -59,8 +73,11 @@ object TableCompare {
     val table1Drop = table1.drop(columns_to_drop:_*)
     val table2Drop = table2.drop(columns_to_drop:_*)
 
-    val table1Hash = table1Drop.withColumn("hash",hash(table1Drop.columns.map(col):_*))
-    val table2Hash = table2Drop.withColumn("hash",hash(table2Drop.columns.map(col):_*))
+    val table1SortCollection = sortCollections(table1Drop,table1Drop.columns.toIterator)
+    val table2SortCollection = sortCollections(table2Drop,table2Drop.columns.toIterator)
+
+    val table1Hash = table1SortCollection.withColumn("hash",hash(table1Drop.columns.map(col):_*))
+    val table2Hash = table2SortCollection.withColumn("hash",hash(table2Drop.columns.map(col):_*))
 
     table1Hash.createOrReplaceTempView("table1Hashed")
     table2Hash.createOrReplaceTempView("table2Hashed")
@@ -97,4 +114,3 @@ object TableCompare {
     resultsString.coalesce(1).write.option("header","true").option("delimiter", "\t").option("quote", "\u0000").csv(config.getString("csv_path"))
   }
 }
-//TODO can we get collisions in murmer3?
