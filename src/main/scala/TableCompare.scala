@@ -6,7 +6,8 @@ import org.apache.spark.sql.types.{ArrayType, DecimalType, StructType}
 
 object TableCompare {
   def main(args: Array[String]): Unit = {
-    val spark               = SparkSession.builder.appName("Table Compare").master("local[1]").getOrCreate()
+//    val spark               = SparkSession.builder.appName("Table Compare").master("local[1]").getOrCreate()
+    val spark               = SparkSession.builder.appName("Table Compare").getOrCreate()
     val config              = ConfigFactory.load()
     val master_table        = config.getString("master_table.table")
     val master_keyspace     = config.getString("master_table.keyspace")
