@@ -5,12 +5,11 @@
   },
   "compare_table"       : {
     "keyspace"          : "uline_test",
-    "table"             : "customer_by_system_country_and_number_2"
+    "table"             : "customer_by_system_country_and_number_dse"
   },
   "primary_key_columns" : [
     "system_country",
-    "customer_number",
-    "customer_id"
+    "customer_number"
   ],
   "exclude_columns"     : [
     "last_changed"

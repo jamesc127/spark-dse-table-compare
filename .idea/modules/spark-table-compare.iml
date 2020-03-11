@@ -180,7 +180,7 @@
     <orderEntry type="library" scope="PROVIDED" name="sbt: com.datastax.spark:spark-cassandra-connector_2.11:2.4.2:jar" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="sbt: com.clearspring.analytics:stream:2.7.0:jar" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="sbt: aopalliance:aopalliance:1.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: com.typesafe:config:1.3.4:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-library:2.11.8:jar" level="project" />
+    <orderEntry type="library" name="sbt: com.typesafe:config:1.3.4:jar" level="project" />
   </component>
 </module>
